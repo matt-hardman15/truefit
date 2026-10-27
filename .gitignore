@@ -1,0 +1,6 @@
+Truefit.xcodeproj/
+Truefit/Info.plist
+build/
+DerivedData/
+*.p8
+.DS_Store
