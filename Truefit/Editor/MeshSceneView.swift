@@ -185,14 +185,14 @@ struct MeshSceneView: UIViewRepresentable {
             let keys = Set(lastAnnotations.map(\.key))
             for (k, b) in labels where !keys.contains(k) { b.removeFromSuperview(); labels[k] = nil }
             let dim = resolved("DimColor"), accent = resolved("AccentColor")
-            let tick = max(0.8, simd_length(model.size) * 0.018)
+            let tickSize = max(0.8, simd_length(model.size) * 0.018)
             for a in lastAnnotations {
                 let selected = a.key == model.selectedDimension
                 let dir = simd_normalize(a.end - a.start)
                 let side: SIMD3<Float> = abs(dir.y) > 0.7 ? [1, 0, 0] : [0, 1, 0]
                 var segs = [(a.start, a.end)]
-                segs.append((a.start - side * tick, a.start + side * tick))
-                segs.append((a.end - side * tick, a.end + side * tick))
+                segs.append((a.start - side * tickSize, a.start + side * tickSize))
+                segs.append((a.end - side * tickSize, a.end + side * tickSize))
                 let n = SCNNode(geometry: lines(segs, color: selected ? accent : dim))
                 n.geometry?.firstMaterial?.readsFromDepthBuffer = false
                 n.renderingOrder = 30
