@@ -265,9 +265,10 @@ enum Prism {
             return s
         }
         let inset = zip(outer.points, outer.normals).map { $0 - $1 * c }
+        let zero: Float = 0
         let rows: [(Float, [SIMD2<Float>])] = c > 0
-            ? [(0, inset), (c, outer.points), (h - c, outer.points), (h, inset)]
-            : [(0, outer.points), (h, outer.points)]
+            ? [(zero, inset), (c, outer.points), (h - c, outer.points), (h, inset)]
+            : [(zero, outer.points), (h, outer.points)]
         let starts = rows.map { addLoop($0.1, $0.0) }
         func quads(_ s0: Int, _ s1: Int, _ count: Int, reversed: Bool) {
             for i in 0..<count {
