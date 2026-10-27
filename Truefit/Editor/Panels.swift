@@ -26,7 +26,7 @@ struct CleanPanel: View {
             }
 
             ValueSlider(title: "Smooth surface",
-                        caption: "Evens out scan noise without shrinking the part.",
+                        caption: "Removes fine speckle. For bigger bumps, use Smooth shape in step 3.",
                         value: $model.settings.smoothPasses.asFloat, range: 0...15, step: 1) {
                 $0 == 0 ? "Off" : "\(Int($0)) \(Int($0) == 1 ? "pass" : "passes")"
             }
@@ -238,6 +238,11 @@ struct RebuildPanel: View {
                             caption: "Bridges cracks and small holes up to about this size. Bigger openings are patched with a smooth surface.",
                             value: $model.completion.fillGaps, range: 0.5...5, step: 0.5) {
                     String(format: "%.1f mm", $0)
+                }
+                ValueSlider(title: "Smooth shape",
+                            caption: "Evens out waviness and lumps about this wide. Higher values also round off sharp edges.",
+                            value: $model.completion.smoothShape, range: 0...8, step: 0.5) {
+                    $0 == 0 ? "Off" : String(format: "%.1f mm", $0)
                 }
                 Toggle(isOn: $model.completion.closeBottom) {
                     VStack(alignment: .leading, spacing: 2) {

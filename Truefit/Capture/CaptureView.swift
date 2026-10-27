@@ -78,8 +78,10 @@ struct CaptureView: View {
                     }
                 }
                 .controlSize(.large)
-                if model.canFinish && model.lap == 1 {
-                    Text("Lying on its side? Flip it for the hidden side, or just finish. Bolts and pins can be rebuilt from the visible half.")
+                if model.canFinish {
+                    Text(model.lap < 3
+                         ? "Next: another lap from higher up. Only flip parts with visible texture; plain dark parts merge better left in place, and step 3 fills the bottom."
+                         : "Finish when you've covered low, middle and high angles.")
                         .font(.caption).foregroundStyle(.white.opacity(0.75))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
@@ -129,12 +131,12 @@ struct ScanTipsView: View {
         NavigationStack {
             List {
                 Section {
-                    tip("light.max", "Even light", "Bright, diffuse light with no harsh shadows.")
-                    tip("square.dashed", "Plain surface", "A matte, uncluttered table with room to walk around.")
-                    tip("figure.walk.circle", "Slow laps", "Circle the object slowly, then again from higher up.")
+                    tip("light.max", "Even light", "Bright, diffuse light with no harsh shadows or glare.")
+                    tip("newspaper", "Textured surface", "Set it on something with a pattern, like newspaper, with room to walk around.")
+                    tip("figure.walk.circle", "Three laps", "Circle slowly at a low angle, then middle, then from above.")
                     tip("ruler", "Measure one thing", "Caliper one feature now so you can calibrate the scan later.")
                 } footer: {
-                    Text("Shiny, transparent or very thin objects don't scan well. A light dusting of spray chalk or developer helps.")
+                    Text("Truefit builds the model from photos, so it needs surface detail to lock onto. Plain black, shiny or see-through parts come out lumpy. Dust them with dry shampoo, foot powder or 3D scanning spray, or add a few strips of masking tape.")
                 }
             }
             .navigationTitle("Before you scan")

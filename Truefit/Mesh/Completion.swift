@@ -24,6 +24,22 @@ struct CompletionSettings: Equatable, Sendable, Codable {
     /// Seal the side that was resting on the table.
     var closeBottom = true
     var detail: Detail = .standard
+    /// Evens out waviness about this wide (mm) on the completed result.
+    var smoothShape: Float = 0
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let d = CompletionSettings()
+        symmetry = try c.decodeIfPresent(Symmetry.self, forKey: .symmetry) ?? d.symmetry
+        mirrorAxis = try c.decodeIfPresent(Int.self, forKey: .mirrorAxis) ?? d.mirrorAxis
+        mirrorOffset = try c.decodeIfPresent(Float.self, forKey: .mirrorOffset) ?? d.mirrorOffset
+        fillGaps = try c.decodeIfPresent(Float.self, forKey: .fillGaps) ?? d.fillGaps
+        closeBottom = try c.decodeIfPresent(Bool.self, forKey: .closeBottom) ?? d.closeBottom
+        detail = try c.decodeIfPresent(Detail.self, forKey: .detail) ?? d.detail
+        smoothShape = try c.decodeIfPresent(Float.self, forKey: .smoothShape) ?? d.smoothShape
+    }
 }
 
 enum Completion {
@@ -74,7 +90,7 @@ enum Completion {
         guard extent > 0 else { return .empty }
         let voxel = max(0.2, extent / s.detail.resolution)
         let k = max(1, Int((s.fillGaps / voxel).rounded()))
-        let pad = k + 3
+        let pad = k + 3 + Int((s.smoothShape / voxel).rounded(.up))
         let lo = b.min - SIMD3<Float>(repeating: Float(pad) * voxel)
         let nx = Int(((b.size.x) / voxel).rounded(.up)) + 2 * pad + 1
         let ny = Int(((b.size.y) / voxel).rounded(.up)) + 2 * pad + 1
@@ -119,9 +135,12 @@ enum Completion {
             for y in 0..<baseRow { for z in 0..<nz { for x in 0..<nx { solid[grid.index(x, y, z)] = 0 } } }
         }
 
-        // 6. Smooth surface.
+        // 6. Smooth surface. Each 3-tap blur pass adds about (2/3)·voxel² of variance,
+        //    so the shape smoothing radius sets the number of extra passes.
         var field = solid.map { Float($0) }
-        blur(&field, grid); blur(&field, grid)
+        let sigma = s.smoothShape / 2
+        let extra = sigma > 0 ? min(150, Int((1.5 * (sigma / voxel) * (sigma / voxel)).rounded())) : 0
+        for _ in 0..<(2 + extra) { blur(&field, grid) }
         grid.lo = lo; grid.voxel = voxel
         var out = surfaceNets(field, grid)
         guard !out.isEmpty else { return .empty }
