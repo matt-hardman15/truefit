@@ -12,6 +12,8 @@ jobs:
   check:
     name: Compile check
     runs-on: macos-15
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Install XcodeGen
@@ -29,6 +31,20 @@ jobs:
             -destination 'generic/platform=iOS' \
             CODE_SIGNING_ALLOWED=NO | tee build.log | grep -E "error:|warning: unre|BUILD" || true
           grep -q "BUILD SUCCEEDED" build.log
+      - name: Publish build errors to the ci-logs branch
+        if: failure()
+        run: |
+          grep -E "error:|fatal error|Error:" build.log | sort -u | head -300 > build-errors.txt || true
+          tail -n 200 build.log > build-tail.txt || true
+          mkdir -p /tmp/ci && cp build.log build-errors.txt build-tail.txt /tmp/ci/ 2>/dev/null || true
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git checkout --orphan ci-logs
+          git rm -rf --quiet . || true
+          cp /tmp/ci/* .
+          git add build.log build-errors.txt build-tail.txt
+          git commit -m "Build log for ${GITHUB_SHA::7}" --quiet
+          git push -f origin ci-logs
       - name: Keep build log
         if: always()
         uses: actions/upload-artifact@v4
