@@ -1,0 +1,282 @@
+Command line invocation:
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild build -project Truefit.xcodeproj -scheme Truefit -configuration Debug -destination generic/platform=iOS CODE_SIGNING_ALLOWED=NO
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'Truefit' in project 'Truefit' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/runner/work/truefit/truefit/Truefit/Resources/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: db5dbbde7c5053ab03832a1567c67116
+Build description path: /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/XCBuildData/db5dbbde7c5053ab03832a1567c67116.xcbuilddata
+ClangStatCache /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
+    cd /Users/runner/work/truefit/truefit/Truefit.xcodeproj
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -o /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products
+    cd /Users/runner/work/truefit/truefit/Truefit.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex
+    cd /Users/runner/work/truefit/truefit/Truefit.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos
+    cd /Users/runner/work/truefit/truefit/Truefit.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit-958e195639784fa74655776d2d81b39f-VFS-iphoneos/all-product-headers.yaml
+    cd /Users/runner/work/truefit/truefit/Truefit.xcodeproj
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit-958e195639784fa74655776d2d81b39f-VFS-iphoneos/all-product-headers.yaml
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphoneos
+    cd /Users/runner/work/truefit/truefit/Truefit.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphoneos
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit.hmap (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit.DependencyStaticMetadataFileList (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit.DependencyMetadataFileList (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-project-headers.hmap (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-own-target-headers.hmap (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-generated-files.hmap (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-all-target-headers.hmap (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-all-non-framework-target-headers.hmap (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-DebugDylibPath-normal-arm64.txt (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-DebugDylibPath-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-DebugDylibInstallName-normal-arm64.txt (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-DebugDylibInstallName-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit_const_extract_protocols.json (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.SwiftFileList (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.SwiftFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.SwiftConstValuesFileList (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.LinkFileList (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit-OutputFileMap.json (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit-OutputFileMap.json
+
+MkDir /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.app (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.app
+
+Ld /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.app/__preview.dylib normal (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0 -dynamiclib -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -O0 -L/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos -F/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos -install_name @rpath/Truefit.debug.dylib -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit_dependency_info.dat -o /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.app/__preview.dylib
+
+MkDir /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_output/unthinned (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_output/unthinned
+
+MkDir /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_output/thinned (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_output/thinned
+
+GenerateAssetSymbols /Users/runner/work/truefit/truefit/Truefit/Resources/Assets.xcassets (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/truefit/truefit/Truefit/Resources/Assets.xcassets --compile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_generated_info.plist --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --minimum-deployment-target 17.0 --platform iphoneos --bundle-identifier com.example.truefit --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+CpResource /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.app/PrivacyInfo.xcprivacy /Users/runner/work/truefit/truefit/Truefit/Resources/PrivacyInfo.xcprivacy (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/runner/work/truefit/truefit/Truefit/Resources/PrivacyInfo.xcprivacy /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.app
+
+CompileAssetCatalogVariant thinned /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.app /Users/runner/work/truefit/truefit/Truefit/Resources/Assets.xcassets (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/truefit/truefit/Truefit/Resources/Assets.xcassets --compile /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --minimum-deployment-target 17.0 --platform iphoneos
+
+SwiftDriver Truefit normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    builtin-SwiftDriver -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Truefit -Onone -enforce-exclusivity\=checked @/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -target arm64-apple-ios17.0 -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Index.noindex/DataStore -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos -F /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit-Swift.h -working-directory /Users/runner/work/truefit/truefit -experimental-emit-module-separately -disable-cmo
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ Truefit (in target 'Truefit' from project 'Truefit')
+
+EmitSwiftModule normal arm64 (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 Compiling\ HomeView.swift,\ Mesh.swift,\ MeshIO.swift,\ MeshSceneView.swift,\ Panels.swift,\ PaywallView.swift /Users/runner/work/truefit/truefit/Truefit/App/HomeView.swift /Users/runner/work/truefit/truefit/Truefit/Mesh/Mesh.swift /Users/runner/work/truefit/truefit/Truefit/Mesh/MeshIO.swift /Users/runner/work/truefit/truefit/Truefit/Editor/MeshSceneView.swift /Users/runner/work/truefit/truefit/Truefit/Editor/Panels.swift /Users/runner/work/truefit/truefit/Truefit/Store/PaywallView.swift (in target 'Truefit' from project 'Truefit')
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/App/HomeView.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Mesh/Mesh.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Mesh/MeshIO.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Editor/MeshSceneView.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Editor/Panels.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Store/PaywallView.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 Compiling\ CaptureModel.swift,\ CaptureView.swift,\ Completion.swift,\ Dimensions.swift,\ EditorModel.swift,\ EditorView.swift /Users/runner/work/truefit/truefit/Truefit/Capture/CaptureModel.swift /Users/runner/work/truefit/truefit/Truefit/Capture/CaptureView.swift /Users/runner/work/truefit/truefit/Truefit/Mesh/Completion.swift /Users/runner/work/truefit/truefit/Truefit/Editor/Dimensions.swift /Users/runner/work/truefit/truefit/Truefit/Editor/EditorModel.swift /Users/runner/work/truefit/truefit/Truefit/Editor/EditorView.swift (in target 'Truefit' from project 'Truefit')
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Capture/CaptureModel.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Capture/CaptureView.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Mesh/Completion.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Editor/Dimensions.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Editor/EditorModel.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Editor/EditorView.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for Truefit (in target 'Truefit' from project 'Truefit')
+
+SwiftDriver\ Compilation\ Requirements Truefit normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Truefit -Onone -enforce-exclusivity\=checked @/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -target arm64-apple-ios17.0 -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Index.noindex/DataStore -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos -F /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit-Swift.h -working-directory /Users/runner/work/truefit/truefit -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling HomeView.swift, Mesh.swift, MeshIO.swift, MeshSceneView.swift, Panels.swift, PaywallView.swift (in target 'Truefit' from project 'Truefit')
+
+SwiftCompile normal arm64 Compiling\ SolidBuilder.swift,\ Store.swift,\ TruefitApp.swift,\ TurnedPart.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/truefit/truefit/Truefit/Mesh/SolidBuilder.swift /Users/runner/work/truefit/truefit/Truefit/Store/Store.swift /Users/runner/work/truefit/truefit/Truefit/App/TruefitApp.swift /Users/runner/work/truefit/truefit/Truefit/Mesh/TurnedPart.swift /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Truefit' from project 'Truefit')
+Failed frontend command:
+/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/runner/work/truefit/truefit/Truefit/Capture/CaptureModel.swift /Users/runner/work/truefit/truefit/Truefit/Capture/CaptureView.swift /Users/runner/work/truefit/truefit/Truefit/Mesh/Completion.swift /Users/runner/work/truefit/truefit/Truefit/Editor/Dimensions.swift /Users/runner/work/truefit/truefit/Truefit/Editor/EditorModel.swift /Users/runner/work/truefit/truefit/Truefit/Editor/EditorView.swift /Users/runner/work/truefit/truefit/Truefit/App/HomeView.swift /Users/runner/work/truefit/truefit/Truefit/Mesh/Mesh.swift /Users/runner/work/truefit/truefit/Truefit/Mesh/MeshIO.swift /Users/runner/work/truefit/truefit/Truefit/Editor/MeshSceneView.swift /Users/runner/work/truefit/truefit/Truefit/Editor/Panels.swift /Users/runner/work/truefit/truefit/Truefit/Store/PaywallView.swift -primary-file /Users/runner/work/truefit/truefit/Truefit/Mesh/SolidBuilder.swift -primary-file /Users/runner/work/truefit/truefit/Truefit/Store/Store.swift -primary-file /Users/runner/work/truefit/truefit/Truefit/App/TruefitApp.swift -primary-file /Users/runner/work/truefit/truefit/Truefit/Mesh/TurnedPart.swift -primary-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols.swift -supplementary-output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/supplementaryOutputs-3 -target arm64-apple-ios17.0 -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -I /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos -F /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos -no-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -swift-version 5 -enforce-exclusivity\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/truefit/truefit -resource-dir /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift -enable-anonymous-context-mangled-names -file-compilation-dir /Users/runner/work/truefit/truefit -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Truefit-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources -Xcc -DDEBUG\=1 -module-name Truefit -frontend-parseable-output -disable-clang-spi -target-sdk-version 18.5 -target-sdk-name iphoneos18.5 -external-plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins\#/Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/local/lib/swift/host/plugins\#/Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -in-process-plugin-server-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins -plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/lib/swift/host/plugins -o /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/SolidBuilder.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Store.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/TruefitApp.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/TurnedPart.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/GeneratedAssetSymbols.o -index-unit-output-path /Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/SolidBuilder.o -index-unit-output-path /Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Store.o -index-unit-output-path /Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/TruefitApp.o -index-unit-output-path /Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/TurnedPart.o -index-unit-output-path /Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/GeneratedAssetSymbols.o -index-store-path /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Mesh/SolidBuilder.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+/Users/runner/work/truefit/truefit/Truefit/Mesh/SolidBuilder.swift:269:17: error: cannot convert value of type 'Int' to expected element type 'Float'
+            ? [(0, inset), (c, outer.points), (h - c, outer.points), (h, inset)]
+                ^
+/Users/runner/work/truefit/truefit/Truefit/Mesh/SolidBuilder.swift:270:17: error: cannot convert value of type 'Int' to expected element type 'Float'
+            : [(0, outer.points), (h, outer.points)]
+                ^
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Store/Store.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+/Users/runner/work/truefit/truefit/Truefit/Store/Store.swift:71:56: warning: main actor-isolated static property 'freeExports' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode
+        case .export: return "You've used your \(Store.freeExports) free exports. Truefit Pro includes unlimited exports."
+                                                       ^
+/Users/runner/work/truefit/truefit/Truefit/Store/Store.swift:14:16: note: static property declared here
+    static let freeExports = 3
+               ^
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/App/TruefitApp.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/work/truefit/truefit/Truefit/Mesh/TurnedPart.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftCompile normal arm64 /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    
+
+SwiftMergeGeneratedHeaders /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/Truefit-Swift.h /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit-Swift.h (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    builtin-swiftHeaderTool -arch arm64 /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit-Swift.h -o /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/DerivedSources/Truefit-Swift.h
+
+SwiftDriverJobDiscovery normal arm64 Compiling CaptureModel.swift, CaptureView.swift, Completion.swift, Dimensions.swift, EditorModel.swift, EditorView.swift (in target 'Truefit' from project 'Truefit')
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.swiftmodule/arm64-apple-ios.swiftmodule /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.swiftmodule (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.swiftmodule /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.swiftmodule/arm64-apple-ios.swiftmodule
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.swiftmodule/arm64-apple-ios.swiftdoc /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.swiftdoc (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.swiftdoc /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.swiftmodule/arm64-apple-ios.swiftdoc
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.swiftmodule/arm64-apple-ios.abi.json /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.abi.json (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.abi.json /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.swiftmodule/arm64-apple-ios.abi.json
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.swiftsourceinfo (in target 'Truefit' from project 'Truefit')
+    cd /Users/runner/work/truefit/truefit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Intermediates.noindex/Truefit.build/Debug-iphoneos/Truefit.build/Objects-normal/arm64/Truefit.swiftsourceinfo /Users/runner/Library/Developer/Xcode/DerivedData/Truefit-bbglqjvlnuzgppdpxhrsjyqyiwsl/Build/Products/Debug-iphoneos/Truefit.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo
+

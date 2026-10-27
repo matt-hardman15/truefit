@@ -1,0 +1,2 @@
+/Users/runner/work/truefit/truefit/Truefit/Mesh/SolidBuilder.swift:269:17: error: cannot convert value of type 'Int' to expected element type 'Float'
+/Users/runner/work/truefit/truefit/Truefit/Mesh/SolidBuilder.swift:270:17: error: cannot convert value of type 'Int' to expected element type 'Float'
