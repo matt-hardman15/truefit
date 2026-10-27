@@ -90,11 +90,11 @@ actor ScanPipeline {
 
 @MainActor
 final class EditorModel: ObservableObject {
-    enum Shown: String, CaseIterable, Identifiable { case scan = "Scan", solid = "Rebuilt"; var id: String { rawValue } }
+    enum Shown: String, CaseIterable, Identifiable { case scan = "Scan", solid = "Result"; var id: String { rawValue } }
     enum Tab: Int, CaseIterable, Identifiable {
         case clean, size, rebuild, export
         var id: Int { rawValue }
-        var title: String { ["Clean", "Size", "Rebuild", "Export"][rawValue] }
+        var title: String { ["Clean", "Size", "Complete", "Export"][rawValue] }
     }
     enum Units: String, CaseIterable, Identifiable, Codable {
         case mm = "Millimeters", cm = "Centimeters", m = "Meters", inch = "Inches"
@@ -110,7 +110,8 @@ final class EditorModel: ObservableObject {
     @Published var settings: ScanSettings {
         didSet {
             guard settings != oldValue else { return }
-            recordHistory(Snapshot(settings: oldValue, solid: solidParams, solidEdited: solidEdited))
+            recordHistory(Snapshot(settings: oldValue, solid: solidParams, solidEdited: solidEdited,
+                                   completion: completion, useExactShape: useExactShape))
             reprocess()
             scheduleSave()
         }
@@ -129,13 +130,46 @@ final class EditorModel: ObservableObject {
     @Published var solidParams = SolidParams() {
         didSet {
             guard solidParams != oldValue else { return }
-            recordHistory(Snapshot(settings: settings, solid: oldValue, solidEdited: solidEdited))
+            recordHistory(Snapshot(settings: settings, solid: oldValue, solidEdited: solidEdited,
+                                   completion: completion, useExactShape: useExactShape))
             rebuildSolid()
             scheduleSave()
         }
     }
     @Published private(set) var solid = Mesh.empty
     @Published private(set) var solidVersion = 0
+
+    // Completion: filling in what the scan missed
+    @Published var completion = CompletionSettings() {
+        didSet {
+            guard completion != oldValue else { return }
+            recordHistory(Snapshot(settings: settings, solid: solidParams, solidEdited: solidEdited,
+                                   completion: oldValue, useExactShape: useExactShape))
+            scheduleCompletion()
+            scheduleSave()
+        }
+    }
+    /// When on, the result is the exact shape (round, block, bolt) instead of the completed scan.
+    @Published var useExactShape = false {
+        didSet {
+            guard useExactShape != oldValue else { return }
+            recordHistory(Snapshot(settings: settings, solid: solidParams, solidEdited: solidEdited,
+                                   completion: completion, useExactShape: oldValue))
+            if useExactShape { detectIfNeeded() }
+            resultVersion += 1
+            scheduleSave()
+        }
+    }
+    @Published private(set) var completed = Mesh.empty
+    @Published private(set) var isCompleting = false
+    @Published private(set) var resultVersion = 0
+    @Published private(set) var symmetryHint: String?
+    private var completionTask: Task<Void, Never>?
+    private var completionToken = 0
+    private var completedFor: (scan: Int, settings: CompletionSettings)?
+
+    /// What "Result" shows and exports by default.
+    var result: Mesh { useExactShape ? solid : completed }
     @Published private(set) var fit: Mesh.ShapeFit?
     private var solidEdited = false
 
@@ -159,20 +193,28 @@ final class EditorModel: ObservableObject {
     @Published var proPrompt: ProFeature?
 
     enum ExportTarget: String, CaseIterable, Identifiable {
-        case scan = "Cleaned scan", solid = "Rebuilt shape", nut = "Matching nut"
+        case scan = "Scan", completed = "Completed", solid = "Exact shape", nut = "Nut"
         var id: String { rawValue }
     }
-    @Published var exportTarget: ExportTarget = .scan
+    @Published var exportTarget: ExportTarget = .completed
+    var exportTargets: [ExportTarget] {
+        var t: [ExportTarget] = [.scan, .completed]
+        if useExactShape { t.append(.solid) }
+        if hasThread { t.append(.nut) }
+        return t
+    }
     @Published private(set) var nut = Mesh.empty
     @Published private(set) var nutVersion = 0
     var previewingNut: Bool { tab == .export && exportTarget == .nut && !nut.isEmpty }
-    var hasThread: Bool { solidParams.kind == .turned && solidParams.turned.mainThread != nil }
+    var hasThread: Bool { useExactShape && solidParams.kind == .turned && solidParams.turned.mainThread != nil }
 
     // Undo / redo
     struct Snapshot: Equatable {
         var settings: ScanSettings
         var solid: SolidParams
         var solidEdited: Bool
+        var completion: CompletionSettings
+        var useExactShape: Bool
     }
     @Published private(set) var undoStack: [Snapshot] = []
     @Published private(set) var redoStack: [Snapshot] = []
@@ -200,6 +242,8 @@ final class EditorModel: ObservableObject {
             self.settings = saved.settings
             self.solidParams = saved.solid
             self.solidEdited = saved.solidEdited
+            if let c = saved.completion { self.completion = c }
+            self.useExactShape = saved.useExactShape ?? false
             rebuildSolid()
         }
         reprocess(refit: true)
@@ -222,7 +266,10 @@ final class EditorModel: ObservableObject {
         redoStack.removeAll()
     }
 
-    private var current: Snapshot { Snapshot(settings: settings, solid: solidParams, solidEdited: solidEdited) }
+    private var current: Snapshot {
+        Snapshot(settings: settings, solid: solidParams, solidEdited: solidEdited,
+                 completion: completion, useExactShape: useExactShape)
+    }
 
     func undo() {
         guard let s = undoStack.popLast() else { return }
@@ -243,6 +290,8 @@ final class EditorModel: ObservableObject {
         settings = s.settings
         solidParams = s.solid
         solidEdited = s.solidEdited
+        completion = s.completion
+        useExactShape = s.useExactShape
     }
 
     // MARK: Saving
@@ -260,12 +309,15 @@ final class EditorModel: ObservableObject {
     func saveNow() {
         guard let url = projectURL else { return }
         saveTask?.cancel()
-        ProjectFile(settings: settings, units: units, solid: solidParams, solidEdited: solidEdited).save(to: url)
+        var file = ProjectFile(settings: settings, units: units, solid: solidParams, solidEdited: solidEdited)
+        file.completion = completion
+        file.useExactShape = useExactShape
+        file.save(to: url)
     }
 
     var size: SIMD3<Float> {
         if previewingNut { return nut.bounds.size }
-        return (shown == .solid ? solid : scan).bounds.size
+        return (shown == .solid ? result : scan).bounds.size
     }
     var scanSize: SIMD3<Float> { scan.bounds.size }
     static let bed: Float = 256
@@ -284,7 +336,8 @@ final class EditorModel: ObservableObject {
             self.removedPieces = result.removedPieces
             self.scanVersion += 1
             self.isProcessing = false
-            if self.tab == .rebuild || self.tab == .export { self.detectIfNeeded() }
+            if self.useExactShape { self.detectIfNeeded() }
+            self.scheduleCompletion()
             if refit { self.cameraResetToken += 1 }
         }
     }
@@ -357,7 +410,66 @@ final class EditorModel: ObservableObject {
         measurePoints = []
     }
 
-    // MARK: Rebuild
+    // MARK: Complete
+
+    /// Whether the completed result is needed right now (it takes a second or two to compute).
+    var needsCompletion: Bool { tab == .rebuild || tab == .export || shown == .solid }
+
+    func scheduleCompletion() {
+        guard needsCompletion, !scan.isEmpty else { return }
+        if let done = completedFor, done.scan == scanVersion, done.settings == completion, !completed.isEmpty { return }
+        completionTask?.cancel()
+        completionToken += 1
+        let token = completionToken, scanNow = scan, settingsNow = completion, version = scanVersion
+        isCompleting = true
+        completionTask = Task {
+            try? await Task.sleep(for: .milliseconds(250))   // let sliders settle
+            guard !Task.isCancelled else { return }
+            let out = await Task.detached(priority: .userInitiated) { Completion.complete(scanNow, settingsNow) }.value
+            guard token == self.completionToken else { return }
+            self.completed = out
+            self.completedFor = (version, settingsNow)
+            self.isCompleting = false
+            self.resultVersion += 1
+        }
+    }
+
+    /// Picks the symmetry mode and finds its plane or axis automatically.
+    func chooseSymmetry(_ mode: CompletionSettings.Symmetry) {
+        var c = completion
+        c.symmetry = mode
+        completion = c
+        symmetryHint = nil
+        guard mode != .none, !scan.isEmpty else { return }
+        let scanNow = scan
+        Task {
+            switch mode {
+            case .mirror:
+                let guess = await Task.detached(priority: .userInitiated) { Completion.detectMirror(scanNow) }.value
+                guard let g = guess, self.completion.symmetry == .mirror else { return }
+                self.historyPaused += 1
+                self.completion.mirrorAxis = g.axis
+                self.completion.mirrorOffset = g.offset
+                self.historyPaused -= 1
+                let name = ["left to right", "top to bottom", "front to back"][g.axis]
+                self.symmetryHint = g.error < 0.03
+                    ? "Found a clean mirror plane, \(name). Slide it if the part looks doubled."
+                    : "No clear mirror plane found. The plane is set \(name); slide it to the part's center line."
+            case .revolve:
+                let conf = await Task.detached(priority: .userInitiated) { TurnedPart.detectAnyAxis(in: scanNow)?.confidence }.value
+                guard self.completion.symmetry == .revolve else { return }
+                if let c = conf, c > 0.5 {
+                    self.symmetryHint = "Found the axis. The result spins the visible profile all the way around."
+                } else {
+                    self.symmetryHint = "This part doesn't look round, so revolving may change its shape. Mirror or Fill gaps may suit it better."
+                }
+            case .none:
+                break
+            }
+        }
+    }
+
+    // MARK: Exact shape
 
     func detectShape(userAsked: Bool = false) {
         guard !scan.isEmpty else { return }
@@ -425,9 +537,10 @@ final class EditorModel: ObservableObject {
     private func rebuildSolid() {
         solid = SolidBuilder.build(solidParams)
         solidVersion += 1
+        resultVersion += 1
         nut = solidParams.kind == .turned ? solidParams.turned.matchingNut() : .empty
         nutVersion += 1
-        if nut.isEmpty && exportTarget == .nut { exportTarget = .solid }
+        if nut.isEmpty && exportTarget == .nut { exportTarget = useExactShape ? .solid : .completed }
     }
 
     private func rounded(_ v: Float) -> Float { (v * 10).rounded() / 10 }
@@ -452,11 +565,12 @@ final class EditorModel: ObservableObject {
 
     // MARK: Export
 
-    func mesh(for shown: Shown) -> Mesh { shown == .solid ? solid : scan }
+    func mesh(for shown: Shown) -> Mesh { shown == .solid ? result : scan }
 
     func mesh(for target: ExportTarget) -> Mesh {
         switch target {
         case .scan: return scan
+        case .completed: return completed
         case .solid: return solid
         case .nut: return nut
         }
@@ -480,6 +594,8 @@ struct ProjectFile: Codable {
     var units: EditorModel.Units
     var solid: SolidParams
     var solidEdited: Bool
+    var completion: CompletionSettings?
+    var useExactShape: Bool?
 
     init(settings: ScanSettings, units: EditorModel.Units, solid: SolidParams, solidEdited: Bool) {
         self.settings = settings; self.units = units; self.solid = solid; self.solidEdited = solidEdited

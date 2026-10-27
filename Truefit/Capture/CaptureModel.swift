@@ -51,16 +51,32 @@ final class CaptureModel: ObservableObject {
         var config = ObjectCaptureSession.Configuration()
         config.checkpointDirectory = checkpointFolder
         config.isOverCaptureEnabled = false
-        session.start(imagesDirectory: imagesFolder, configuration: config)
         self.session = session
+        // Listen before starting so the first state changes aren't missed.
         stateTask = Task { [weak self] in
             for await state in session.stateUpdates {
                 self?.handle(state)
             }
         }
+        session.start(imagesDirectory: imagesFolder, configuration: config)
+        handle(session.state)
+        // Safety net: the session can reach "ready" before the listener attaches.
+        watchTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(400))
+                guard let self, let s = self.session else { return }
+                self.handle(s.state)
+            }
+        }
     }
 
+    private var lastStateKey = ""
+    private var watchTask: Task<Void, Never>?
+
     private func handle(_ state: ObjectCaptureSession.CaptureState) {
+        let key = String(describing: state)
+        guard key != lastStateKey else { return }
+        lastStateKey = key
         canContinue = false
         canFinish = false
         isDetecting = false
@@ -113,6 +129,7 @@ final class CaptureModel: ObservableObject {
         session.beginNewScanPassAfterFlip()
         lap += 1
         flipped = true
+        lastStateKey = ""
     }
 
     /// Another lap without moving the object, e.g. from a higher angle.
@@ -121,6 +138,7 @@ final class CaptureModel: ObservableObject {
         session.beginNewScanPass()
         lap += 1
         flipped = false
+        lastStateKey = ""
     }
 
     func finishTapped() { session?.finish() }
@@ -128,6 +146,7 @@ final class CaptureModel: ObservableObject {
     func cancel() {
         session?.cancel()
         stateTask?.cancel()
+        watchTask?.cancel()
         reconstructTask?.cancel()
         try? FileManager.default.removeItem(at: folder)
     }
@@ -135,6 +154,7 @@ final class CaptureModel: ObservableObject {
     private func reconstruct() {
         guard reconstructTask == nil else { return }
         stateTask?.cancel()
+        watchTask?.cancel()
         session = nil   // frees the camera and memory before reconstruction
         phase = .reconstructing(0)
         let images = imagesFolder, checkpoint = checkpointFolder, output = modelURL

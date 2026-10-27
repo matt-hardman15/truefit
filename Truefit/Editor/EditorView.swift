@@ -53,7 +53,7 @@ struct EditorView: View {
         .animation(.snappy, value: model.selectedDimension)
         .onChange(of: model.shown) { _, shown in
             model.selectedDimension = nil
-            if shown == .solid { model.detectIfNeeded() }
+            if shown == .solid { model.scheduleCompletion() }
         }
         .onAppear { model.canEditSolid = store.isPro }
         .onDisappear { model.saveNow() }
@@ -61,9 +61,9 @@ struct EditorView: View {
         .onChange(of: model.proPrompt) { _, f in if let f { paywall = f; model.proPrompt = nil } }
         .onChange(of: model.tab) { _, tab in
             switch tab {
-            case .rebuild: model.detectIfNeeded(); model.shown = .solid
+            case .rebuild: model.shown = .solid; model.scheduleCompletion()
             case .clean, .size: model.shown = .scan
-            case .export: model.detectIfNeeded()
+            case .export: model.scheduleCompletion()
             }
             if tab != .size { model.cancelMeasuring() }
             model.selectedDimension = nil
@@ -123,7 +123,7 @@ struct EditorView: View {
                 }
             }
             .padding(12)
-            if model.isProcessing {
+            if model.isProcessing || (model.isCompleting && model.shown == .solid) {
                 VStack { Spacer(); ProgressView().padding(.bottom, 56) }
             }
         }

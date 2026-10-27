@@ -287,10 +287,28 @@ extension TurnedPart {
     static func detect(in scan: Mesh) -> Detection? {
         let pts = scan.positions
         guard pts.count > 200 else { return nil }
+        let c = pts.reduce(SIMD3<Float>.zero, +) / Float(pts.count)
+        return detect(in: scan, startAxis: principalAxes(of: pts, around: c)[0])
+    }
+
+    /// Tries all three principal directions and keeps the most convincing axis,
+    /// so flat round parts (knobs, wheels) work as well as long ones.
+    static func detectAnyAxis(in scan: Mesh) -> Detection? {
+        let pts = scan.positions
+        guard pts.count > 200 else { return nil }
+        let c = pts.reduce(SIMD3<Float>.zero, +) / Float(pts.count)
+        return principalAxes(of: pts, around: c)
+            .compactMap { detect(in: scan, startAxis: $0) }
+            .max { $0.confidence < $1.confidence }
+    }
+
+    static func detect(in scan: Mesh, startAxis: SIMD3<Float>) -> Detection? {
+        let pts = scan.positions
+        guard pts.count > 200 else { return nil }
 
         // 1. Start from the longest principal axis.
         var center = pts.reduce(SIMD3<Float>.zero, +) / Float(pts.count)
-        var axis = principalAxis(of: pts, around: center)
+        var axis = startAxis
 
         // 2. Refine: fit circles to slices, then fit a line through their centers.
         //    Circle fits work on partial arcs, so a hidden underside doesn't bias the axis.
@@ -463,7 +481,8 @@ extension TurnedPart {
         return (tmin, w, nb, bins)
     }
 
-    private static func principalAxis(of pts: [SIMD3<Float>], around c: SIMD3<Float>) -> SIMD3<Float> {
+    /// Principal directions, longest first.
+    static func principalAxes(of pts: [SIMD3<Float>], around c: SIMD3<Float>) -> [SIMD3<Float>] {
         var cov = [[Double]](repeating: [0, 0, 0], count: 3)
         let stride = max(1, pts.count / 20000)
         for i in Swift.stride(from: 0, to: pts.count, by: stride) {
@@ -471,8 +490,9 @@ extension TurnedPart {
             for r in 0..<3 { for q in 0..<3 { cov[r][q] += Double(d[r] * d[q]) } }
         }
         let (vals, vecs) = Mesh.jacobiEigen(cov)
-        let k = (0..<3).max { vals[$0] < vals[$1] }!
-        return simd_normalize(SIMD3<Float>(Float(vecs[0][k]), Float(vecs[1][k]), Float(vecs[2][k])))
+        return (0..<3).sorted { vals[$0] > vals[$1] }.map {
+            simd_normalize(SIMD3<Float>(Float(vecs[0][$0]), Float(vecs[1][$0]), Float(vecs[2][$0])))
+        }
     }
 
     /// Kåsa least-squares circle fit; works on partial arcs.

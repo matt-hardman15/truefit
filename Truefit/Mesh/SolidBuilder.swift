@@ -1,6 +1,4 @@
 import Foundation
-import SceneKit
-import UIKit
 import simd
 
 /// The editable shape that replaces a scan. All sizes in millimeters.
@@ -33,69 +31,42 @@ enum SolidBuilder {
         if p.kind == .turned { return p.turned.mesh() }
         let h = max(0.4, p.height)
         let chamfer = max(0, min(p.chamfer, h / 2 - 0.1, p.outerMin / 4))
-        let path: UIBezierPath
+        let outer: Prism.Loop
         switch p.kind {
         case .round:
-            let r = CGFloat(p.diameter / 2)
-            path = UIBezierPath(ovalIn: CGRect(x: -r, y: -r, width: 2 * r, height: 2 * r))
+            let r = p.diameter / 2
+            outer = Prism.loop(count: 192, reach: r * 1.5) { simd_length($0) - r }
         case .block, .turned:
-            let w = CGFloat(p.width), d = CGFloat(p.depth)
-            let c = CGFloat(max(0, min(p.cornerRadius, min(p.width, p.depth) / 2 - 0.05)))
-            path = UIBezierPath(roundedRect: CGRect(x: -w / 2, y: -d / 2, width: w, height: d), cornerRadius: c)
+            let w = p.width / 2, d = p.depth / 2
+            let c = max(0, min(p.cornerRadius, min(w, d) - 0.05))
+            outer = Prism.loop(count: 192, reach: (w + d) * 1.5) { Prism.roundedRect($0, w, d, c) }
         }
+        var hole: Prism.Loop?
         if p.hole != .none, p.holeSize > 0, p.holeSize < p.outerMin - 2 * chamfer - 0.8 {
-            path.append(holePath(p.hole, size: CGFloat(p.holeSize)))
-            path.usesEvenOddFillRule = true
+            hole = holeLoop(p.hole, size: p.holeSize)
         }
-        path.flatness = 0.02
-
-        let shape = SCNShape(path: path, extrusionDepth: CGFloat(h))
-        shape.chamferRadius = CGFloat(chamfer)
-        shape.chamferMode = .both
-        // Flatten so the generated geometry is fully built before we read it.
-        let node = SCNNode(geometry: shape).flattenedClone()
-        guard let geo = node.geometry else { return .empty }
-        let raw = MeshIO.mesh(from: geo)
-
-        // SCNShape extrudes along Z around the origin; stand it up on Y.
-        let standUp = simd_float4x4(rows: [
-            SIMD4<Float>(1, 0, 0, 0),
-            SIMD4<Float>(0, 0, 1, 0),
-            SIMD4<Float>(0, -1, 0, 0),
-            SIMD4<Float>(0, 0, 0, 1),
-        ])
-        return raw.transformed(standUp).droppedToBed()
+        return Prism.extrude(outer: outer, hole: hole, height: h, chamfer: chamfer)
     }
 
-    static func holePath(_ hole: SolidParams.Hole, size: CGFloat) -> UIBezierPath {
+    static func holeLoop(_ hole: SolidParams.Hole, size: Float) -> Prism.Loop? {
         let r = size / 2
         switch hole {
         case .none:
-            return UIBezierPath()
+            return nil
         case .round:
-            return UIBezierPath(ovalIn: CGRect(x: -r, y: -r, width: size, height: size))
+            return Prism.loop(count: 96, reach: r * 2) { simd_length($0) - r }
         case .hex:
-            let path = UIBezierPath()
-            let R = size / sqrt(3)
-            for k in 0..<6 {
-                let a = CGFloat(k) * .pi / 3
-                let pt = CGPoint(x: R * cos(a), y: R * sin(a))
-                if k == 0 { path.move(to: pt) } else { path.addLine(to: pt) }
+            // across flats = size; 96 samples put a vertex on every corner
+            return Prism.loop(count: 96, reach: size) { p in
+                let a = atan2(p.y, p.x)
+                let sector = Float.pi / 3
+                var off = a.truncatingRemainder(dividingBy: sector)
+                if off < 0 { off += sector }
+                return simd_length(p) * cos(off - sector / 2) - r
             }
-            path.close()
-            return path
         case .dShaft:
             // flat side at 75% of the diameter, the common motor-shaft profile
-            let path = UIBezierPath()
-            let a0 = asin(0.5)               // flat sits r/2 from the center
-            let sweep = CGFloat.pi + 2 * a0  // the long way round, below the flat
-            for k in 0...64 {
-                let a = a0 - sweep * CGFloat(k) / 64
-                let pt = CGPoint(x: r * cos(a), y: r * sin(a))
-                if k == 0 { path.move(to: pt) } else { path.addLine(to: pt) }
-            }
-            path.close()
-            return path
+            return Prism.loop(count: 96, reach: r * 2) { p in max(simd_length(p) - r, p.y - r * 0.5) }
         }
     }
 
@@ -103,47 +74,57 @@ enum SolidBuilder {
     /// without scanning: slightly oversized, noisy, tilted, with stray pieces,
     /// in meters like a real capture.
     static func sampleScan() -> Mesh {
-        let ribs = 30
-        let outline = UIBezierPath()
-        for k in 0...360 {
-            let a = CGFloat(k) / 360 * 2 * .pi
-            let r = 15.2 + 0.45 * pow(max(0, cos(a * CGFloat(ribs))), 3)
-            let pt = CGPoint(x: r * cos(a), y: r * sin(a))
-            if k == 0 { outline.move(to: pt) } else { outline.addLine(to: pt) }
+        let ribs: Float = 30
+        let outline = Prism.loop(count: 360, reach: 25) { p in
+            let a = atan2(p.y, p.x)
+            return simd_length(p) - (15.2 + 0.45 * pow(max(0, cos(a * ribs)), 3))
         }
-        outline.close()
-        outline.append(holePath(.dShaft, size: 6))
-        outline.usesEvenOddFillRule = true
-        let shape = SCNShape(path: outline, extrusionDepth: 17)
-        shape.chamferRadius = 1
-        let geo = SCNNode(geometry: shape).flattenedClone().geometry ?? shape
-        var knob = MeshIO.mesh(from: geo)
+        var knob = Prism.extrude(outer: outline, hole: holeLoop(.dShaft, size: 6), height: 17, chamfer: 1)
         knob = subdivideLongEdges(knob, maxEdge: 1.2)
 
         var positions = knob.positions
         var indices = knob.indices
         func addBlob(center: SIMD3<Float>, radius: Float) {
-            let s = SCNSphere(radius: CGFloat(radius)); s.segmentCount = 16
-            let m = MeshIO.mesh(from: SCNNode(geometry: s).flattenedClone().geometry ?? s)
+            let m = sphere(radius: radius)
             let base = UInt32(positions.count)
             positions += m.positions.map { $0 + center }
             indices += m.indices.map { $0 + base }
         }
         addBlob(center: SIMD3<Float>(21, 6, 4), radius: 1.6)
-        addBlob(center: SIMD3<Float>(-19, -12, -6), radius: 2.2)
+        addBlob(center: SIMD3<Float>(-19, -2, -6), radius: 2.2)
 
         positions = positions.map { p in
             let n = 0.16 * sin(p.x * 3.1 + p.z * 1.7) * cos(p.y * 2.9 - p.z * 2.3)
                 + 0.1 * sin(p.x * 7.3 + p.y * 6.1 + p.z * 5.2)
-            return SIMD3<Float>(p.x * 1.012 + n, p.y * 1.012 - n, p.z + n * 0.8)
+            return SIMD3<Float>(p.x * 1.012 + n, p.y + n * 0.8, p.z * 1.012 - n)
         }
         let tilt = simd_float4x4(simd_quatf(angle: 0.16, axis: simd_normalize(SIMD3<Float>(1, 0.3, 0.2))))
-        // stand it on Y (SCNShape extrudes along Z), tilt, convert to meters
-        let standUp = simd_float4x4(rows: [
-            SIMD4<Float>(1, 0, 0, 0), SIMD4<Float>(0, 0, 1, 0), SIMD4<Float>(0, -1, 0, 0), SIMD4<Float>(0, 0, 0, 1),
-        ])
         let meters = simd_float4x4(diagonal: SIMD4<Float>(0.001, 0.001, 0.001, 1))
-        return Mesh(positions: positions, indices: indices).transformed(meters * tilt * standUp)
+        return Mesh(positions: positions, indices: indices).transformed(meters * tilt)
+    }
+
+    static func sphere(radius: Float, rings: Int = 12, segments: Int = 18) -> Mesh {
+        var pos = [SIMD3<Float>](), idx = [UInt32]()
+        pos.append([0, radius, 0])
+        for i in 1..<rings {
+            let th = Float(i) / Float(rings) * .pi
+            for j in 0..<segments {
+                let ph = Float(j) / Float(segments) * 2 * .pi
+                pos.append(SIMD3(radius * sin(th) * cos(ph), radius * cos(th), radius * sin(th) * sin(ph)))
+            }
+        }
+        pos.append([0, -radius, 0])
+        let bottom = UInt32(pos.count - 1)
+        func v(_ ring: Int, _ seg: Int) -> UInt32 { UInt32(1 + (ring - 1) * segments + (seg % segments)) }
+        for j in 0..<segments { idx += [0, v(1, j + 1), v(1, j)] }
+        for i in 1..<(rings - 1) {
+            for j in 0..<segments {
+                idx += [v(i, j), v(i, j + 1), v(i + 1, j), v(i, j + 1), v(i + 1, j + 1), v(i + 1, j)]
+            }
+        }
+        for j in 0..<segments { idx += [bottom, v(rings - 1, j), v(rings - 1, j + 1)] }
+        let m = Mesh(positions: pos, indices: idx)
+        return Completion.signedVolume(m) < 0 ? Completion.flipped(m) : m
     }
 
     /// A "phone scan" of an M6×30 bolt lying on its side: the side touching the
@@ -236,5 +217,98 @@ enum SolidBuilder {
             if !changed { break }
         }
         return m
+    }
+}
+
+
+/// Builds closed prisms (extruded outlines) directly, so every part is a
+/// watertight mesh we control. Outlines are star-shaped around the origin and
+/// sampled at evenly spaced angles; X/Z is the bed plane and Y is up.
+enum Prism {
+    struct Loop {
+        var points: [SIMD2<Float>]
+        var normals: [SIMD2<Float>]
+    }
+
+    /// Samples a shape given by its signed distance function along rays from the center.
+    static func loop(count: Int, reach: Float, sdf: (SIMD2<Float>) -> Float) -> Loop {
+        var pts = [SIMD2<Float>](), nrm = [SIMD2<Float>]()
+        for k in 0..<count {
+            let a = -Float.pi + 2 * .pi * Float(k) / Float(count)
+            let d = SIMD2<Float>(cos(a), sin(a))
+            var lo: Float = 0, hi = reach
+            for _ in 0..<40 {
+                let m = (lo + hi) / 2
+                if sdf(d * m) < 0 { lo = m } else { hi = m }
+            }
+            let p = d * lo
+            let e: Float = 1e-3
+            var g = SIMD2<Float>(sdf(p + [e, 0]) - sdf(p - [e, 0]), sdf(p + [0, e]) - sdf(p - [0, e]))
+            let len = simd_length(g)
+            g = len > 0 ? g / len : d
+            pts.append(p); nrm.append(g)
+        }
+        return Loop(points: pts, normals: nrm)
+    }
+
+    static func roundedRect(_ p: SIMD2<Float>, _ w: Float, _ d: Float, _ r: Float) -> Float {
+        let q = abs(p) - SIMD2<Float>(w - r, d - r)
+        return simd_length(simd_max(q, .zero)) + min(max(q.x, q.y), 0) - r
+    }
+
+    static func extrude(outer: Loop, hole: Loop?, height h: Float, chamfer c: Float) -> Mesh {
+        var V = [SIMD3<Float>](), F = [UInt32]()
+        let n = outer.points.count
+        func addLoop(_ pts: [SIMD2<Float>], _ y: Float) -> Int {
+            let s = V.count
+            for p in pts { V.append(SIMD3(p.x, y, p.y)) }
+            return s
+        }
+        let inset = zip(outer.points, outer.normals).map { $0 - $1 * c }
+        let rows: [(Float, [SIMD2<Float>])] = c > 0
+            ? [(0, inset), (c, outer.points), (h - c, outer.points), (h, inset)]
+            : [(0, outer.points), (h, outer.points)]
+        let starts = rows.map { addLoop($0.1, $0.0) }
+        func quads(_ s0: Int, _ s1: Int, _ count: Int, reversed: Bool) {
+            for i in 0..<count {
+                let a = UInt32(s0 + i), b = UInt32(s1 + i)
+                let cc = UInt32(s0 + (i + 1) % count), d = UInt32(s1 + (i + 1) % count)
+                F += reversed ? [a, b, cc, cc, b, d] : [a, cc, b, cc, d, b]
+            }
+        }
+        for r in 0..<(rows.count - 1) { quads(starts[r], starts[r + 1], n, reversed: false) }
+        func tri(_ t: (Int, Int, Int), top: Bool) {
+            F += top ? [UInt32(t.0), UInt32(t.2), UInt32(t.1)] : [UInt32(t.0), UInt32(t.1), UInt32(t.2)]
+        }
+        func cap(outerStart so: Int, innerStart si: Int?, innerCount m: Int, y: Float, top: Bool) {
+            guard let si else {
+                let center = V.count
+                V.append(SIMD3(0, y, 0))
+                for i in 0..<n { tri((so + i, center, so + (i + 1) % n), top: top) }
+                return
+            }
+            var i = 0, j = 0
+            while i < n || j < m {
+                let ao = -Float.pi + 2 * .pi * Float(i + 1) / Float(n)
+                let ai = -Float.pi + 2 * .pi * Float(j + 1) / Float(m)
+                if j == m || (i < n && ao <= ai) {
+                    tri((so + i, si + j % m, so + (i + 1) % n), top: top); i += 1
+                } else {
+                    tri((so + i % n, si + j, si + (j + 1) % m), top: top); j += 1
+                }
+            }
+        }
+        if let hole {
+            let m = hole.points.count
+            let hb = addLoop(hole.points, 0), ht = addLoop(hole.points, h)
+            quads(hb, ht, m, reversed: true)
+            cap(outerStart: starts[0], innerStart: hb, innerCount: m, y: 0, top: false)
+            cap(outerStart: starts[starts.count - 1], innerStart: ht, innerCount: m, y: h, top: true)
+        } else {
+            cap(outerStart: starts[0], innerStart: nil, innerCount: 0, y: 0, top: false)
+            cap(outerStart: starts[starts.count - 1], innerStart: nil, innerCount: 0, y: h, top: true)
+        }
+        let mesh = Mesh(positions: V, indices: F)
+        return Completion.signedVolume(mesh) < 0 ? Completion.flipped(mesh) : mesh
     }
 }

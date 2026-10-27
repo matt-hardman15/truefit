@@ -224,7 +224,8 @@ struct Mesh: Sendable {
             }
             t += 3
         }
-        let tight = !edges.isEmpty && edges.values.allSatisfy { $0 == 2 }
+        // Closed when every edge is shared by an even number of triangles (no open borders).
+        let tight = !edges.isEmpty && edges.values.allSatisfy { $0 % 2 == 0 }
         return Stats(volume: abs(vol), surfaceArea: area, isWatertight: tight, triangles: triangleCount)
     }
 

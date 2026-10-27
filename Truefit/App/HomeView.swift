@@ -160,8 +160,13 @@ struct HomeView: View {
             Button {
                 showTips = true
             } label: {
-                Label("Scan an object", systemImage: "camera.viewfinder")
+                Label {
+                    Text("Scan an object")
+                } icon: {
+                    Image(systemName: "camera.viewfinder")
+                }
                     .font(.headline)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
             }

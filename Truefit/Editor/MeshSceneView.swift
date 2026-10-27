@@ -51,6 +51,8 @@ struct MeshSceneView: UIViewRepresentable {
         private var nutVersion = -1
         private var lastNutPreview: Bool?
         private let cutNode = SCNNode()
+        private let symmetryNode = SCNNode()
+        private var lastSymmetry: SIMD4<Float> = .zero
         private var lastAnnotations: [DimensionAnnotation] = []
         private var lastSelected: DimensionAnnotation.Key?
         private var lastCut: SIMD4<Float> = .zero
@@ -89,7 +91,7 @@ struct MeshSceneView: UIViewRepresentable {
             let fill = SCNNode(); fill.light = SCNLight(); fill.light!.type = .ambient; fill.light!.intensity = 420
             let rim = SCNNode(); rim.light = SCNLight(); rim.light!.type = .directional; rim.light!.intensity = 350
             rim.eulerAngles = SCNVector3(-0.3, -2.4, 0)
-            [key, fill, rim, scanNode, solidNode, nutNode, boxNode, gridNode, measureNode, dimNode, cutNode].forEach { scene.rootNode.addChildNode($0) }
+            [key, fill, rim, scanNode, solidNode, nutNode, boxNode, gridNode, measureNode, dimNode, cutNode, symmetryNode].forEach { scene.rootNode.addChildNode($0) }
 
             for m in [scanMaterial, ghostMaterial, solidMaterial] {
                 m.lightingModel = .physicallyBased
@@ -113,9 +115,9 @@ struct MeshSceneView: UIViewRepresentable {
                 scanNode.geometry = MeshIO.geometry(for: model.scan)
                 lastShown = nil
             }
-            if model.solidVersion != solidVersion {
-                solidVersion = model.solidVersion
-                solidNode.geometry = MeshIO.geometry(for: model.solid)
+            if model.resultVersion != solidVersion {
+                solidVersion = model.resultVersion
+                solidNode.geometry = MeshIO.geometry(for: model.result)
                 solidNode.geometry?.firstMaterial = solidMaterial
                 lastShown = nil
             }
@@ -139,7 +141,7 @@ struct MeshSceneView: UIViewRepresentable {
             if model.measurePoints != lastMeasure { lastMeasure = model.measurePoints; drawMeasure() }
             if model.cameraResetToken != resetToken { resetToken = model.cameraResetToken; frame() }
 
-            let turnedOverlay = model.shown == .solid && model.solidParams.kind == .turned
+            let turnedOverlay = model.shown == .solid && model.useExactShape && model.solidParams.kind == .turned
             scanNode.simdTransform = turnedOverlay ? model.overlayTransform : matrix_identity_float4x4
 
             let showDims = model.showDimensions && !model.isMeasuring && (model.tab == .size || model.tab == .rebuild)
@@ -151,6 +153,7 @@ struct MeshSceneView: UIViewRepresentable {
                 drawDimensions()
             }
             syncCutPlane()
+            syncSymmetry()
         }
 
         // MARK: Dimensions
@@ -284,6 +287,44 @@ struct MeshSceneView: UIViewRepresentable {
             default:
                 drag = nil
             }
+        }
+
+        /// Shows the mirror plane while the Complete step is open.
+        private func syncSymmetry() {
+            let c = model.completion
+            let show = model.tab == .rebuild && !model.useExactShape && c.symmetry == .mirror && !model.scan.isEmpty
+            let key = SIMD4<Float>(show ? 1 : 0, Float(c.mirrorAxis), c.mirrorOffset, Float(model.scanVersion % 100000))
+            guard key != lastSymmetry else { return }
+            lastSymmetry = key
+            symmetryNode.childNodes.forEach { $0.removeFromParentNode() }
+            guard show else { return }
+            let b = model.scan.bounds, size = b.size
+            let at = Completion.mirrorPlane(model.scan, c)
+            let pad: Float = 1.25
+            let plane: SCNPlane
+            let node = SCNNode()
+            switch c.mirrorAxis {
+            case 0:
+                plane = SCNPlane(width: CGFloat(size.z * pad), height: CGFloat(size.y * pad))
+                node.simdEulerAngles = [0, .pi / 2, 0]
+                node.simdPosition = [at, b.center.y, b.center.z]
+            case 1:
+                plane = SCNPlane(width: CGFloat(size.x * pad), height: CGFloat(size.z * pad))
+                node.simdEulerAngles = [-.pi / 2, 0, 0]
+                node.simdPosition = [b.center.x, at, b.center.z]
+            default:
+                plane = SCNPlane(width: CGFloat(size.x * pad), height: CGFloat(size.y * pad))
+                node.simdPosition = [b.center.x, b.center.y, at]
+            }
+            let m = SCNMaterial()
+            m.lightingModel = .constant
+            m.diffuse.contents = resolved("DimColor").withAlphaComponent(0.3)
+            m.isDoubleSided = true
+            m.writesToDepthBuffer = false
+            plane.firstMaterial = m
+            node.geometry = plane
+            node.renderingOrder = 25
+            symmetryNode.addChildNode(node)
         }
 
         private func syncCutPlane() {

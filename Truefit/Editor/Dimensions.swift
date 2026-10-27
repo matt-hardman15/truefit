@@ -29,13 +29,16 @@ extension EditorModel {
 
     /// Dimensions for whatever is showing in the viewport.
     var annotations: [DimensionAnnotation] {
-        shown == .solid ? solidAnnotations : scanAnnotations
+        shown == .solid && useExactShape ? solidAnnotations : scanAnnotations
     }
+
+    /// The mesh whose overall size the W/D/H dimensions describe.
+    private var sizedMesh: Mesh { shown == .solid ? completed : scan }
 
     private var gap: Float { max(2.5, simd_length(size) * 0.07) }
 
     private var scanAnnotations: [DimensionAnnotation] {
-        let s = scan.bounds.size
+        let s = sizedMesh.bounds.size
         guard s.x > 0 else { return [] }
         let g = gap, x = s.x / 2, z = s.z / 2
         return [
@@ -119,9 +122,9 @@ extension EditorModel {
             return
         }
         switch key {
-        case .scanWidth: resizeScan(axis: 0, to: v)
-        case .scanHeight: resizeScan(axis: 1, to: v)
-        case .scanDepth: resizeScan(axis: 2, to: v)
+        case .scanWidth: resizeShown(axis: 0, to: v)
+        case .scanHeight: resizeShown(axis: 1, to: v)
+        case .scanDepth: resizeShown(axis: 2, to: v)
         case .diameter: editSolid { $0.diameter = max(1, v) }
         case .width: editSolid { $0.width = max(1, v) }
         case .depth: editSolid { $0.depth = max(1, v) }
@@ -146,6 +149,17 @@ extension EditorModel {
                 let others = p.turned.totalLength - p.turned.sections[i].length
                 p.turned.sections[i].length = max(0.3, v - others)
             }
+        }
+    }
+
+    /// Resizes so the mesh on screen (scan or completed result) reaches `value` on this axis.
+    func resizeShown(axis: Int, to value: Float) {
+        let shownSize = sizedMesh.bounds.size[axis], scanNow = scanSize[axis]
+        guard shownSize > 0, scanNow > 0 else { return }
+        if resizeMode == .stretch {
+            resizeScan(axis: axis, to: scanNow + (value - shownSize))
+        } else {
+            resizeScan(axis: axis, to: scanNow * value / shownSize)
         }
     }
 

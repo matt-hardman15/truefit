@@ -195,25 +195,125 @@ struct RebuildPanel: View {
         self.model = model; self.focused = focused; self._paywall = paywall
     }
 
+    @State private var showExact = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
-            Text("Swap the bumpy scan for a clean, exact shape with real dimensions you can edit.")
+            Text("Fill in what the scan missed. The result is a closed solid, ready to print.")
                 .font(.subheadline).foregroundStyle(.secondary)
 
-            if !store.isPro {
-                ProLock(text: ProFeature.rebuild.reason + " You can preview the detected shape above.") { paywall = .rebuild }
-            }
-
-            Card {
-                HStack {
-                    Text("Detect shape").font(.headline)
-                    Spacer()
-                    Button("Detect from scan") { model.detectShape(userAsked: true) }.buttonStyle(.bordered)
+            VStack(alignment: .leading, spacing: 10) {
+                SectionLabel("Symmetry")
+                Picker("Symmetry", selection: Binding(get: { model.completion.symmetry },
+                                                      set: { model.chooseSymmetry($0) })) {
+                    ForEach(CompletionSettings.Symmetry.allCases) { Text($0.rawValue).tag($0) }
                 }
-                Text(model.fitSummary).font(.subheadline).foregroundStyle(.secondary)
+                .pickerStyle(.segmented)
+                Text(symmetryExplanation).font(.footnote).foregroundStyle(.secondary)
+
+                if model.completion.symmetry == .mirror {
+                    Picker("Mirror across", selection: $model.completion.mirrorAxis) {
+                        Text("Left–right").tag(0)
+                        Text("Front–back").tag(2)
+                        Text("Top–bottom").tag(1)
+                    }
+                    .pickerStyle(.segmented)
+                    ValueSlider(title: "Plane position",
+                                caption: "The orange plane in the view. Line it up with the part's center line.",
+                                value: $model.completion.mirrorOffset, range: -0.5...0.5, step: 0.005) {
+                        String(format: "%+.1f mm", $0 * model.scanSize[model.completion.mirrorAxis])
+                    }
+                    Button("Find the plane again") { model.chooseSymmetry(.mirror) }
+                        .font(.subheadline)
+                }
+                if let hint = model.symmetryHint {
+                    Label(hint, systemImage: "sparkles")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
 
-            Group {
+            if model.completion.symmetry != .revolve {
+                ValueSlider(title: "Fill gaps",
+                            caption: "Bridges cracks and small holes up to about this size. Bigger openings are patched with a smooth surface.",
+                            value: $model.completion.fillGaps, range: 0.5...5, step: 0.5) {
+                    String(format: "%.1f mm", $0)
+                }
+                Toggle(isOn: $model.completion.closeBottom) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Close the bottom").font(.body.weight(.medium))
+                        Text("Seals the side that was resting on the table with a flat base.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    SectionLabel("Detail")
+                    Picker("Detail", selection: $model.completion.detail) {
+                        ForEach(CompletionSettings.Detail.allCases) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    Text("Finer detail keeps small features but takes longer to compute.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+
+            HStack(spacing: 8) {
+                if model.isCompleting {
+                    ProgressView().controlSize(.small)
+                    Text("Completing…").font(.footnote).foregroundStyle(.secondary)
+                } else if !model.completed.isEmpty && !model.useExactShape {
+                    let s = model.completed.bounds.size
+                    Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                    Text(String(format: "Completed: %.1f × %.1f × %.1f mm", s.x, s.z, s.y))
+                        .font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
+                }
+            }
+
+            Toggle("Show scan overlay", isOn: $model.showOverlay)
+
+            Divider()
+
+            DisclosureGroup(isExpanded: $showExact) {
+                exactShape.padding(.top, 12)
+            } label: {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Exact shape").font(.headline)
+                    Text("Replace the scan with a clean round part, block, or bolt with threads.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+        }
+        .onAppear { if model.useExactShape { showExact = true } }
+    }
+
+    private var symmetryExplanation: String {
+        switch model.completion.symmetry {
+        case .none: return "Keeps the scan's own shape and patches holes smoothly."
+        case .mirror: return "Copies the visible side across a plane to fill the hidden side. Best for parts that match side to side."
+        case .revolve: return "Spins the visible profile around the part's center axis. Best for round parts like knobs, caps and spacers."
+        }
+    }
+
+    @ViewBuilder private var exactShape: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Toggle("Use an exact shape", isOn: Binding(
+                get: { model.useExactShape },
+                set: { on in
+                    if on && !store.isPro { paywall = .rebuild; return }
+                    model.useExactShape = on
+                }))
+            .font(.body.weight(.medium))
+
+            if model.useExactShape {
+                Card {
+                    HStack {
+                        Text("Detect shape").font(.headline)
+                        Spacer()
+                        Button("Detect from scan") { model.detectShape(userAsked: true) }.buttonStyle(.bordered)
+                    }
+                    Text(model.fitSummary).font(.subheadline).foregroundStyle(.secondary)
+                }
+
                 VStack(alignment: .leading, spacing: 10) {
                     SectionLabel("Shape")
                     Picker("Shape", selection: param(\.kind)) {
@@ -223,44 +323,42 @@ struct RebuildPanel: View {
                     if model.solidParams.kind == .turned {
                         TurnedEditor(model: model, focused: focused)
                     } else {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 10) {
-                        if model.solidParams.kind == .round {
-                            MMField(title: "Diameter", value: param(\.diameter), focused: focused)
-                        } else {
-                            MMField(title: "Width", value: param(\.width), focused: focused)
-                            MMField(title: "Depth", value: param(\.depth), focused: focused)
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 10) {
+                            if model.solidParams.kind == .round {
+                                MMField(title: "Diameter", value: param(\.diameter), focused: focused)
+                            } else {
+                                MMField(title: "Width", value: param(\.width), focused: focused)
+                                MMField(title: "Depth", value: param(\.depth), focused: focused)
+                            }
+                            MMField(title: "Height", value: param(\.height), focused: focused)
+                            if model.solidParams.kind == .block {
+                                MMField(title: "Corners", value: param(\.cornerRadius), focused: focused)
+                            }
+                            MMField(title: "Chamfer", value: param(\.chamfer), focused: focused)
                         }
-                        MMField(title: "Height", value: param(\.height), focused: focused)
-                        if model.solidParams.kind == .block {
-                            MMField(title: "Corners", value: param(\.cornerRadius), focused: focused)
-                        }
-                        MMField(title: "Chamfer", value: param(\.chamfer), focused: focused)
-                    }
                     }
                 }
 
                 if model.solidParams.kind != .turned {
-                VStack(alignment: .leading, spacing: 10) {
-                    SectionLabel("Center hole")
-                    HStack(alignment: .bottom, spacing: 8) {
-                        Picker("Hole", selection: param(\.hole)) {
-                            ForEach(SolidParams.Hole.allCases) { Text($0.rawValue).tag($0) }
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        if model.solidParams.hole != .none {
-                            MMField(title: model.solidParams.hole == .hex ? "Across flats" : "Diameter",
-                                    value: param(\.holeSize), focused: focused)
-                                .frame(width: 130)
+                    VStack(alignment: .leading, spacing: 10) {
+                        SectionLabel("Center hole")
+                        HStack(alignment: .bottom, spacing: 8) {
+                            Picker("Hole", selection: param(\.hole)) {
+                                ForEach(SolidParams.Hole.allCases) { Text($0.rawValue).tag($0) }
+                            }
+                            .pickerStyle(.menu)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            if model.solidParams.hole != .none {
+                                MMField(title: model.solidParams.hole == .hex ? "Across flats" : "Diameter",
+                                        value: param(\.holeSize), focused: focused)
+                                    .frame(width: 130)
+                            }
                         }
                     }
                 }
-                }
-
-                Toggle("Show scan overlay", isOn: $model.showOverlay)
+            } else if !store.isPro {
+                Text("Exact shapes are part of Truefit Pro.").font(.footnote).foregroundStyle(.secondary)
             }
-            .disabled(!store.isPro)
-            .opacity(store.isPro ? 1 : 0.55)
         }
     }
 
@@ -290,9 +388,7 @@ struct ExportPanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Picker("Export", selection: $model.exportTarget) {
-                ForEach(EditorModel.ExportTarget.allCases.filter { $0 != .nut || model.hasThread }) {
-                    Text($0.rawValue).tag($0)
-                }
+                ForEach(model.exportTargets) { Text($0.rawValue).tag($0) }
             }
             .pickerStyle(.segmented)
             if which == .nut, let t = model.solidParams.turned.mainThread {
@@ -340,18 +436,21 @@ struct ExportPanel: View {
             .controlSize(.large)
             .disabled(mesh.isEmpty)
 
+            if which == .completed && model.isCompleting {
+                Label("Completing the scan…", systemImage: "hourglass").font(.footnote).foregroundStyle(.secondary)
+            }
             Text(footnote).font(.footnote).foregroundStyle(.secondary)
             if let error { Text(error).font(.footnote).foregroundStyle(.red) }
         }
         .onAppear {
-            if model.exportTarget != .nut { model.exportTarget = model.shown == .solid ? .solid : .scan }
+            if model.exportTarget != .nut { model.exportTarget = model.useExactShape ? .solid : .completed }
             if fileName.isEmpty { fileName = model.defaultFileName }
         }
         .onChange(of: model.exportTarget) { _, t in
             let base = model.defaultFileName
             fileName = t == .nut ? base + "-nut" : base
         }
-        .task(id: "\(which.rawValue)-\(model.scanVersion)-\(model.solidVersion)-\(model.nutVersion)") {
+        .task(id: "\(which.rawValue)-\(model.scanVersion)-\(model.solidVersion)-\(model.nutVersion)-\(model.resultVersion)") {
             stats = nil
             let mesh = model.mesh(for: which)
             stats = await Task.detached(priority: .userInitiated) { mesh.stats() }.value
