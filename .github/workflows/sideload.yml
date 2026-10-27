@@ -1,0 +1,60 @@
+# Builds an unsigned Truefit.ipa for installing with a free Apple ID
+# (Sideloadly or similar), with Pro unlocked for testing.
+# Download it from the run's "Artifacts" section on the Actions tab.
+name: Sideload build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ipa:
+    name: Build Truefit.ipa
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        env:
+          DEVELOPMENT_TEAM: ""
+          BUNDLE_ID: com.truefit.sideload
+        run: xcodegen generate
+      - name: Build unsigned app
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project Truefit.xcodeproj -scheme Truefit -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS=SIDELOAD | tee build.log | grep -E "error:|BUILD" || true
+          grep -q "BUILD SUCCEEDED" build.log
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/Truefit.app Payload/
+          zip -qry Truefit.ipa Payload
+          ls -la Truefit.ipa
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Truefit-sideload-ipa
+          path: Truefit.ipa
+          retention-days: 30
+      - name: Publish build errors to the ci-logs branch
+        if: failure()
+        run: |
+          grep -E "error:|fatal error|Error:" build.log | sort -u | head -300 > build-errors.txt || true
+          tail -n 200 build.log > build-tail.txt || true
+          mkdir -p /tmp/ci && cp build.log build-errors.txt build-tail.txt /tmp/ci/ 2>/dev/null || true
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git checkout --orphan ci-logs
+          git rm -rf --quiet . || true
+          cp /tmp/ci/* .
+          git add build.log build-errors.txt build-tail.txt
+          git commit -m "Sideload build log for ${GITHUB_SHA::7}" --quiet
+          git push -f origin ci-logs

@@ -46,7 +46,11 @@ final class Store: ObservableObject {
                 active = true
             }
         }
+        #if SIDELOAD
+        isPro = true   // test builds installed outside the App Store have Pro unlocked
+        #else
         isPro = active
+        #endif
     }
 
     func restore() async {
