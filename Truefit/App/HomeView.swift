@@ -55,6 +55,8 @@ struct HomeView: View {
     @State private var showCapture = false
     @State private var showImporter = false
     @State private var showPaywall = false
+    @State private var showSettings = false
+    @AppStorage("hasOnboarded") private var hasOnboarded = false
     @State private var loading: String?
     @State private var error: String?
 
@@ -111,6 +113,10 @@ struct HomeView: View {
             }
             .navigationTitle("Truefit")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { showSettings = true } label: { Image(systemName: "gearshape") }
+                        .accessibilityLabel("Settings")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     if store.isPro {
                         Label("Pro", systemImage: "checkmark.seal.fill").labelStyle(.titleAndIcon)
@@ -136,6 +142,13 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showTips) { ScanTipsView { showCapture = true } }
             .sheet(isPresented: $showPaywall) { PaywallView(feature: nil) }
+            .sheet(isPresented: $showSettings) { SettingsView() }
+            .fullScreenCover(isPresented: Binding(get: { !hasOnboarded }, set: { if !$0 { hasOnboarded = true } })) {
+                OnboardingView(onTrySample: {
+                    hasOnboarded = true
+                    openBoltSample()
+                }, onFinish: { hasOnboarded = true })
+            }
             .fullScreenCover(isPresented: $showCapture) {
                 CaptureView { url in
                     showCapture = false

@@ -15,6 +15,17 @@ final class Store: ObservableObject {
 
     @Published private(set) var isPro = false
     @Published private(set) var exportsUsed: Int
+    @Published private(set) var activePlanName: String?
+    @Published private(set) var renewalDate: Date?
+
+    /// Sideloaded test builds unlock Pro without a purchase.
+    var isTestBuild: Bool {
+        #if SIDELOAD
+        return true
+        #else
+        return false
+        #endif
+    }
 
     private var updatesTask: Task<Void, Never>?
     private let defaults = UserDefaults.standard
@@ -41,11 +52,16 @@ final class Store: ObservableObject {
 
     func refresh() async {
         var active = false
+        var plan: String?, renews: Date?
         for await result in Transaction.currentEntitlements {
             if case .verified(let t) = result, Self.productIDs.contains(t.productID), t.revocationDate == nil {
                 active = true
+                plan = t.productID == Self.yearlyID ? "Yearly plan" : "Monthly plan"
+                renews = t.expirationDate
             }
         }
+        activePlanName = plan
+        renewalDate = renews
         #if SIDELOAD
         isPro = true   // test builds installed outside the App Store have Pro unlocked
         #else

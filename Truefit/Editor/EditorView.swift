@@ -6,6 +6,8 @@ struct EditorView: View {
     @EnvironmentObject private var store: Store
     @State private var paywall: ProFeature?
     @FocusState private var focused: Bool
+    @State private var hiddenGuides: Set<Int> = []
+    @State private var forcedGuide: Int?
 
     init(model: EditorModel) { _model = StateObject(wrappedValue: model) }
 
@@ -16,7 +18,17 @@ struct EditorView: View {
                     .frame(maxHeight: .infinity)
                 StepTabs(selection: $model.tab)
                 ScrollView {
-                    panel
+                    VStack(alignment: .leading, spacing: 18) {
+                        if showGuide {
+                            StepGuideCard(guide: StepGuide.guide(for: model.tab)) {
+                                GuideMemory.markSeen(model.tab)
+                                hiddenGuides.insert(model.tab.rawValue)
+                                forcedGuide = nil
+                            }
+                            .transition(.opacity)
+                        }
+                        panel
+                    }
                         .padding(.horizontal, 20)
                         .padding(.vertical, 18)
                         .frame(maxWidth: 640, alignment: .leading)
@@ -31,6 +43,10 @@ struct EditorView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
+                Button {
+                    withAnimation { forcedGuide = model.tab.rawValue; hiddenGuides.remove(model.tab.rawValue) }
+                } label: { Image(systemName: "questionmark.circle") }
+                    .accessibilityLabel("What does this step do?")
                 Button { model.undo() } label: { Image(systemName: "arrow.uturn.backward") }
                     .disabled(!model.canUndo)
                     .accessibilityLabel("Undo")
@@ -68,6 +84,13 @@ struct EditorView: View {
             if tab != .size { model.cancelMeasuring() }
             model.selectedDimension = nil
         }
+    }
+
+    private var showGuide: Bool {
+        let t = model.tab.rawValue
+        if forcedGuide == t { return true }
+        if hiddenGuides.contains(t) { return false }
+        return model.isSample || !GuideMemory.seen(model.tab)
     }
 
     // MARK: Viewport

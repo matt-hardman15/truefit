@@ -59,7 +59,9 @@ struct PaywallView: View {
 }
 
 enum Links {
-    // Replace with your hosted pages before submitting (see README).
-    static let privacy = URL(string: "https://YOUR-GITHUB-USERNAME.github.io/truefit/privacy.html")!
+    // Hosted with GitHub Pages from the repo's docs folder (see README, step 8).
+    static let privacy = URL(string: "https://matt-hardman15.github.io/truefit/privacy.html")!
     static let terms = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+    static let refunds = URL(string: "https://reportaproblem.apple.com")!
+    static let support = URL(string: "https://github.com/matt-hardman15/truefit/issues")!
 }
